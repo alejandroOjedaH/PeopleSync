@@ -1,0 +1,13 @@
+
+#main{
+    height: 97vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+#main input, #main p-password{
+    margin-bottom: 15px;
+}

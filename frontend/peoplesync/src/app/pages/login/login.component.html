@@ -1,0 +1,7 @@
+<div id="main">
+    <h3>USUARIO</h3>
+    <input type="text" pInputText [(ngModel)]="user" (keydown.enter)="login()"/>
+    <h3>CONTRASEÑA</h3>
+    <p-password [(ngModel)]="password" [feedback]="false" (keydown.enter)="login()"></p-password>
+    <p-button label="Login" (onClick)="login()"></p-button>
+</div>
