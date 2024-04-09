@@ -3,13 +3,11 @@ import { encrypt, login } from "../config/hash.js";
 import { generateToken, checkToken } from "../config/jwt.js";
 
 export async function createUser(req, res) {
-  const { name, surnames, username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
     const hashPassword = await encrypt(password);
     const newUser = await User.create({
-      name: name,
-      surnames: surnames,
       username: username,
       email: email,
       password: hashPassword,

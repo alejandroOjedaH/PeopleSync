@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { LoginService } from '../../services/login.service.js';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +12,7 @@ export class LoginComponent {
   user: string | null = null;
   password: string | null = null;
 
-  constructor(private loginService: LoginService, private router: Router) {
+  constructor(private loginService: LoginService, private router: Router, private messageService: MessageService) {
 
   }
 
@@ -24,9 +25,13 @@ export class LoginComponent {
           this.router.navigate(['/chats']);
         },
         error => {
-          console.error(error);
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Usario/Contraseña erronea' });
         }
       );
     }
+  }
+
+  irRegistro() {
+    this.router.navigate(['/registro']);
   }
 }
