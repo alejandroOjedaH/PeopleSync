@@ -33,9 +33,11 @@ export class RegistroComponent {
           this.router.navigate(['/login']);
         },
         error => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al registrar' });
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
         }
       );
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: "La contraseña tiene que coincidir" });
     }
   }
 

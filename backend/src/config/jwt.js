@@ -14,14 +14,14 @@ export const checkCredentials = expressjwt({
 
 //generacion token
 export function generateToken(user) {
-  delete user.password;
+  delete user.dataValues.password;
   const payload = {
     username: user,
   };
 
   //Genera y firma el token con la clave secreta
   try {
-    const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+    const token = jwt.sign(payload, secret, { expiresIn: "4s" });
     return token;
   } catch (err) {
     console.log(err);
