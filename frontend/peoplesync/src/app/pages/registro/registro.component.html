@@ -9,7 +9,7 @@
     <p-password [(ngModel)]="repassword" [feedback]="false" (keydown.enter)="registrarse()"></p-password>
     <div class="botonesRegistro">
         <p-button label="Registrarse" (onClick)="registrarse()"></p-button>
-        <p-button label="Volver" (onClick)="irLogin()"></p-button>
+        <p-button severity="secondary" label="Volver" (onClick)="irLogin()"></p-button>
     </div>
 </div>
 <p-toast></p-toast>
