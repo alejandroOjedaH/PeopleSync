@@ -1,7 +1,6 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
 
-import { ContentType } from "./ContentType.js";
 
 export const Message = sequelize.define(
   "messages",
@@ -14,17 +13,12 @@ export const Message = sequelize.define(
     content: {
       type: DataTypes.BLOB,
       allowNull: false
+    },
+    contentType: {
+      type: DataTypes.STRING,
+      validate: {
+        isIn: [["text", "img", "pdf"]]
+      }
     }
   },
 );
-
-ContentType.hasMany(Message, {
-  foreignKey: "contentTypeId",
-  onUpdate: "CASCADE",
-  sourceKey: "id"
-});
-
-Message.belongsTo(ContentType, {
-  foreignKey: "contentTypeId",
-  targetKey: "id"
-});

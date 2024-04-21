@@ -7,7 +7,6 @@ import usersRoutes from "./routes/users.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import userChatRoutes from "./routes/userchat.routes.js";
-import contentTypeRoutes from "./routes/contentType.routes.js";
 
 const app = express();
 
@@ -20,6 +19,5 @@ app.use("/api/users", usersRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/userchat", userChatRoutes);
-app.use("/api/contenttype", contentTypeRoutes);
 
 export default app;
