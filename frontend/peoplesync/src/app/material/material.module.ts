@@ -7,6 +7,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
+import { SidebarModule } from 'primeng/sidebar';
 
 
 const material = [
@@ -18,6 +19,7 @@ const material = [
   TableModule,
   DialogModule,
   ToastModule,
+  SidebarModule
 ];
 
 @NgModule({

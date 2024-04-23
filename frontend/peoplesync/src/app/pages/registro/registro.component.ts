@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { LoginService } from '../../services/login.service.js';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.component.html',
   styleUrl: './registro.component.css'
 })
-export class RegistroComponent {
+export class RegistroComponent implements OnDestroy {
+  private ngUnsubscribe = new Subject();
   username: string | undefined;
   mail: string | undefined;
   password: string | undefined;
@@ -17,6 +19,7 @@ export class RegistroComponent {
   constructor(private userService: LoginService, private router: Router, private messageService: MessageService) {
 
   }
+
   irLogin() {
     this.router.navigate(['/login']);
   }
@@ -27,7 +30,7 @@ export class RegistroComponent {
       user.username = this.username;
       user.email = this.mail;
       user.password = this.password;
-      this.userService.registry(user).subscribe(
+      this.userService.registry(user).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
         (response) => {
           this.messageService.add({ severity: 'success', summary: "Exito", detail: "Registro exitoso" });
           this.router.navigate(['/login']);
@@ -41,4 +44,8 @@ export class RegistroComponent {
     }
   }
 
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next(true);
+    this.ngUnsubscribe.complete();
+  }
 }

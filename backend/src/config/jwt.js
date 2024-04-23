@@ -21,7 +21,7 @@ export function generateToken(user) {
 
   //Genera y firma el token con la clave secreta
   try {
-    const token = jwt.sign(payload, secret, { expiresIn: "4s" });
+    const token = jwt.sign(payload, secret, { expiresIn: "1h" });
     return token;
   } catch (err) {
     console.log(err);

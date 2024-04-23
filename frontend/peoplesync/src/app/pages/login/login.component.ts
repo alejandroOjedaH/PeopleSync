@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { LoginService } from '../../services/login.service.js';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
+  private ngUnsubscribe = new Subject();
   user: string | null = null;
   password: string | null = null;
 
@@ -18,7 +20,7 @@ export class LoginComponent {
 
   login(): void {
     if (this.user && this.password) {
-      const response = this.loginService.login(this.user, this.password).subscribe(
+      this.loginService.login(this.user, this.password).pipe(takeUntil(this.ngUnsubscribe)).subscribe(
         (response) => {
           const token = response.token;
           localStorage.setItem('token', token);
@@ -33,5 +35,10 @@ export class LoginComponent {
 
   irRegistro() {
     this.router.navigate(['/registro']);
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next(true);
+    this.ngUnsubscribe.complete();
   }
 }

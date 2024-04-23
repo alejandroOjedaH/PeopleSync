@@ -1,0 +1,13 @@
+<div class="card flex justify-content-center">
+    <p-sidebar [(visible)]="sidebarVisible">
+        <div class="menu-flex">
+            <div class="menu-buttons">
+                <div class="menu-button" (click)="goChats()">Chats</div>
+                <div class="menu-button" (click)="goProfile()">Perfil</div>
+            </div>
+            <div class="menu-session" (click)="closeSession()">Cerrar Sesión <i
+                    class="fa-solid fa-arrow-right-from-bracket"></i></div>
+        </div>
+    </p-sidebar>
+    <i class="fa-solid fa-bars menu-ico" (click)="sidebarVisible = true"></i>
+</div>
