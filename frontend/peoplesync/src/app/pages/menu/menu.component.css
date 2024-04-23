@@ -24,14 +24,14 @@
 }
 
 .menu-button{
-    background-color: #FBF3D5;
+    background-color: #EFBC9B;
 }
 
 .menu-button:hover{
-    background-color: #f8eab6;
+    background-color: #eba170;
 }
 .menu-button:active{
-    background-color: #f5dc83;
+    background-color: #e7935b;
 }
 
 .menu-session{
