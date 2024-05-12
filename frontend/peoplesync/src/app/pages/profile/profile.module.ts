@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ChatsRoutingModule } from './chats-routing.module';
-import { ChatsComponent } from './chats.component';
+import { ProfileRoutingModule } from './profile-routing.module';
+import { ProfileComponent } from './profile.component';
 import { MaterialModule } from '../../material/material.module';
 
 
 @NgModule({
   declarations: [
-    ChatsComponent,
+    ProfileComponent,
   ],
   imports: [
     CommonModule,
-    ChatsRoutingModule,
+    ProfileRoutingModule,
     MaterialModule,
   ]
 })
-export class ChatsModule { }
+export class ProfileModule { }

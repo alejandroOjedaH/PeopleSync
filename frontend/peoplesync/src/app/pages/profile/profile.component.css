@@ -1,0 +1,71 @@
+.header{
+    width: 100%;
+    height: 100px;
+    background-color: #EFBC9B;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+
+    i{
+        margin: 25px;
+        padding: 15px;
+        font-size: 30px;
+        background-color: #FBF3D5;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    i:hover{
+        background-color: #f8eab6;
+    }
+    i:active{
+        background-color: #f5dc83;
+    }
+}
+
+.header-switch{
+    padding: 10px;
+}
+
+.content {
+    height: 87.8vh;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+
+}
+
+.content-user, .content-foto{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: start;
+    width: 30%;
+    margin: 30px;
+}
+
+.content-user div div, .content-foto div *{
+    margin:15px;
+}
+
+:host ::ng-deep .p-inputswitch.p-inputswitch-checked:not(.p-disabled) .p-inputswitch-slider{
+    background-color: #FBF3D5;
+}
+
+:host ::ng-deep .p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider{
+    background-color: rgb(247, 230, 169);
+}
+
+.foto{
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -24,6 +24,7 @@ export class LoginComponent implements OnDestroy {
         (response) => {
           const token = response.token;
           localStorage.setItem('token', token);
+          localStorage.setItem('user', this.user ? this.user : '');
           this.router.navigate(['/chats']);
         },
         error => {

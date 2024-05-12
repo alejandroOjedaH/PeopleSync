@@ -2,4 +2,4 @@
 cd .\backend
 start npm run dev
 cd ..\frontend\peoplesync
-start ng serve
+start npm run ng serve

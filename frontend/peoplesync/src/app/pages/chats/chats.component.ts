@@ -24,6 +24,7 @@ export class ChatsComponent {
     },
       error => {
         console.error(error);
+        this.router.navigate(['/login']);
       })
   }
 

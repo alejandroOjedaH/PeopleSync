@@ -8,6 +8,10 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { SidebarModule } from 'primeng/sidebar';
+import { MenuComponent } from '../pages/menu/menu.component';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { FileUploadModule } from 'primeng/fileupload';
 
 
 const material = [
@@ -19,16 +23,20 @@ const material = [
   TableModule,
   DialogModule,
   ToastModule,
-  SidebarModule
+  SidebarModule,
+  FloatLabelModule,
+  InputSwitchModule,
+  FileUploadModule
 ];
 
 @NgModule({
-  declarations: [],
+  declarations: [MenuComponent],
   imports: [
     ...material,
   ],
   exports: [
     ...material,
+    MenuComponent
   ],
 })
 export class MaterialModule { }

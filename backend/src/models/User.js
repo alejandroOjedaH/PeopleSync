@@ -31,7 +31,7 @@ export const User = sequelize.define(
       allowNull: false,
     },
     profileImage: {
-      type: DataTypes.BLOB,
+      type: DataTypes.TEXT,
     }
   },
   {
