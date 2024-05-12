@@ -1,6 +1,7 @@
 import { User } from "../models/User.js";
 import { encrypt, login } from "../config/hash.js";
 import { generateToken, checkToken } from "../config/jwt.js";
+import { Op } from "sequelize";
 
 export async function createUser(req, res) {
   const { username, email, password } = req.body;
@@ -73,6 +74,19 @@ export async function updateUser(req, res) {
       req.body.password = await encrypt(req.body.password);
     }
     await user.update(req.body);
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}
+
+export async function getUsers(req, res) {
+  try {
+    let user = await User.findAll({
+      where: {
+        id: { [Op.ne]: req.params.id }
+      }
+    });
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ err: err.message });

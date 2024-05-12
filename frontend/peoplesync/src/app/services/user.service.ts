@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { Profile } from "../interfaces/user.interface.js";
+import { User, Profile } from "../interfaces/user.interface.js";
 import { BACKEND } from "../config/Config.js";
 
 @Injectable({
@@ -33,5 +33,16 @@ export class UserService {
             })
         }
         return this.http.put<Profile>(this.path + '/' + id, body, httpOptions);
+    }
+
+    getUsers(): Observable<User[]> {
+        const token = localStorage.getItem('token');
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
+        }
+        return this.http.get<User[]>(this.path + "/notequal/" + localStorage.getItem('id'), httpOptions);
     }
 }

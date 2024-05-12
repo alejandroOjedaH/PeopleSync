@@ -3,9 +3,38 @@
         <app-menu></app-menu>
     </div>
     <div>CHATS</div>
-    <i class="fa-solid fa-plus"></i>
+    <i class="fa-solid fa-plus" (click)="modalNewChat()"></i>
 </div>
 
 <div class="content">
+    <div class="chatCard" *ngFor="let chat of allChats" (click)="goChat(chat.id)">
+        <div class="name">
+            <h2>{{chat.name}}</h2>
+        </div>
+        <div class="users">
+            <div *ngFor="let user of chat.user">
+                <div>{{user.username}}</div>
+            </div>
+        </div>
+    </div>
 
 </div>
+
+
+<!-- popup new chat -->
+<p-dialog header="Nuevo Chat" [modal]="true" [(visible)]="newChatVisible" [style]="{ width: '80%', height: '50%' }">
+
+    <div class="new-chat-flex">
+        <h2>Nombre del chat</h2>
+        <input type="text" pInputText [(ngModel)]="newChat.name" />
+        <h2>Participantes</h2>
+        <!-- multiselect with chips -->
+        <p-multiSelect [options]="allUsers" [(ngModel)]="newChat.integrantes" placeholder="Seleccionar integrantes"
+            optionLabel="name" display="chip" [showClear]=true appendTo="body" [filter]="true" filterBy="username"
+            optionLabel="username" />
+        <p-button label="Crear" (onClick)="saveNewChat()" />
+    </div>
+
+</p-dialog>
+
+<p-toast />

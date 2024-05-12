@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
 
+
 export const UserChat = sequelize.define(
   "users_chats",
   {
@@ -10,6 +11,6 @@ export const UserChat = sequelize.define(
     }
   },
   {
-    timestamps: false,
+    timestamps: true,
   }
 );

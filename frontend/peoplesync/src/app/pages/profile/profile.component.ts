@@ -81,7 +81,6 @@ export class ProfileComponent {
     if (this.password === this.rePassword) {
 
       this.userService.updateUser(this.profile).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-        console.log(response);
         this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuario actualizado' });
       },
         error => {

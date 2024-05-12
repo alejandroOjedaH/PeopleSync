@@ -12,6 +12,7 @@ import { MenuComponent } from '../pages/menu/menu.component';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { FileUploadModule } from 'primeng/fileupload';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 
 const material = [
@@ -26,7 +27,8 @@ const material = [
   SidebarModule,
   FloatLabelModule,
   InputSwitchModule,
-  FileUploadModule
+  FileUploadModule,
+  MultiSelectModule,
 ];
 
 @NgModule({

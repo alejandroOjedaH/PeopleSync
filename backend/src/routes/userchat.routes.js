@@ -1,7 +1,8 @@
 import { Router } from "express";
-import { } from "../controllers/userchat.controller.js";
+import { getUserChat } from "../controllers/userchat.controller.js";
 
 const router = Router();
 
+router.route("/:userid").get(getUserChat);
 
 export default router;
