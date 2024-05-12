@@ -23,7 +23,7 @@ export class ProfileComponent {
 
   profile: Profile = { username: '', password: '', email: '', profileImage: '' };
 
-  username: string | null;
+  id: string | null;
 
   isEditable: boolean = false;
 
@@ -31,7 +31,7 @@ export class ProfileComponent {
   rePassword: string = '';
 
   constructor(private loginService: LoginService, private router: Router, private userService: UserService, private messageService: MessageService) {
-    this.username = localStorage.getItem('user');
+    this.id = localStorage.getItem('id');
   }
 
   ngOnInit(): void {
@@ -46,7 +46,7 @@ export class ProfileComponent {
         this.router.navigate(['/login']);
       })
 
-    this.userService.getUser(this.username).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+    this.userService.getUser(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
       this.profile = response;
       console.log(this.profile);
     },
@@ -72,22 +72,26 @@ export class ProfileComponent {
   }
 
   save() {
-    if (this.password !== '') {
-      if (this.password === this.rePassword) {
-        this.profile.password = this.password;
-
-      } else {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'La contraseña no coincide' });
-      }
+    if (this.password !== '' && this.rePassword !== '') {
+      this.profile.password = this.password;
+    } else {
+      delete this.profile.password;
     }
-    this.userService.updateUser(this.profile).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-      console.log(response);
-      localStorage.setItem('user', this.profile.username);
-      this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuario actualizado' });
-    },
-      error => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
-      })
+
+    if (this.password === this.rePassword) {
+
+      this.userService.updateUser(this.profile).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        console.log(response);
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuario actualizado' });
+      },
+        error => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
+        })
+
+    } else {
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'La contraseña no coincide' });
+    }
+
   }
 
   ngOnDestroy(): void {

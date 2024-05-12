@@ -28,7 +28,7 @@ export async function loginUser(req, res) {
     const isLoged = await login(username, password, user.password);
     if (isLoged) {
       const token = generateToken(user);
-      res.status(200).json({ token: token });
+      res.status(200).json({ token: token, id: user.id });
     } else {
       res.status(401).json({ isLoged });
     }
@@ -54,7 +54,7 @@ export async function checkTokenUser(req, res) {
 export async function getUser(req, res) {
   try {
     let user = await User.findOne({
-      where: { username: req.params.username }
+      where: { id: req.params.id }
     })
     res.status(200).json(user);
   } catch (err) {
@@ -65,8 +65,13 @@ export async function getUser(req, res) {
 export async function updateUser(req, res) {
   try {
     let user = await User.findOne({
-      where: { username: req.params.username }
+      where: { id: req.params.id }
     })
+    console.log(req.body.password);
+
+    if (req.body.password) {
+      req.body.password = await encrypt(req.body.password);
+    }
     await user.update(req.body);
     res.status(200).json(user);
   } catch (err) {

@@ -14,9 +14,8 @@ export const checkCredentials = expressjwt({
 
 //generacion token
 export function generateToken(user) {
-  delete user.dataValues.password;
   const payload = {
-    username: user,
+    username: user.username,
   };
 
   //Genera y firma el token con la clave secreta

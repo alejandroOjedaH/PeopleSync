@@ -12,7 +12,7 @@ export class UserService {
 
     constructor(private http: HttpClient) { }
 
-    getUser(username: string | null): Observable<Profile> {
+    getUser(id: string | null): Observable<Profile> {
         const token = localStorage.getItem('token');
         const httpOptions = {
             headers: new HttpHeaders({
@@ -20,18 +20,18 @@ export class UserService {
                 'Authorization': `Bearer ${token}`
             })
         }
-        return this.http.get<Profile>(this.path + '/' + username, httpOptions);
+        return this.http.get<Profile>(this.path + '/' + id, httpOptions);
     }
 
     updateUser(body: Profile) {
         const token = localStorage.getItem('token');
-        const username = localStorage.getItem('user');
+        const id = localStorage.getItem('id');
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             })
         }
-        return this.http.put<Profile>(this.path + '/' + username, body, httpOptions);
+        return this.http.put<Profile>(this.path + '/' + id, body, httpOptions);
     }
 }

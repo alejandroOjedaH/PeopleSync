@@ -1,7 +1,8 @@
-export interface Token{
+export interface Token {
     token: string;
+    id: string;
 }
 
-export interface SesionActica{
+export interface SesionActica {
     isActive: boolean;
 }

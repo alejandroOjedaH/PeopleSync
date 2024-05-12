@@ -17,7 +17,6 @@ export class ChatsComponent {
 
   ngOnInit(): void {
     this.loginService.checkToken().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-
       if (!response) {
         this.router.navigate(['/login']);
       }

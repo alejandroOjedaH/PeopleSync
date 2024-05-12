@@ -7,6 +7,6 @@ export interface User {
 export interface Profile {
     username: string,
     email: string,
-    password: string,
+    password?: string,
     profileImage: string
 }
