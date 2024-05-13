@@ -29,3 +29,64 @@ export async function getUserChat(req, res) {
         res.status(500).json({ err: err.message });
     }
 }
+
+export async function getUserChatByChatId(req, res) {
+    try {
+        const idChat = req.params.chatid;
+        const userChats = await UserChat.findAll({
+            where: {
+                chatId: idChat
+            },
+            include: [{
+                model: Chat
+            }, {
+                model: User
+            }]
+        }
+        )
+        res.status(200).json(userChats);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+}
+
+export async function updateUserChat(req, res) {
+    try {
+        const idChat = req.body.id;
+        const integrantes = req.body.integrantes;
+
+        //modificar chat
+        const chat = await Chat.findOne({
+            where: {
+                id: idChat
+            }
+        })
+
+        chat.name = req.body.name;
+        await chat.save();
+
+        //eliminar integrantes
+        const userChats = await UserChat.findAll({
+            where: {
+                chatId: idChat
+            },
+            include: [{
+                model: Chat
+            }, {
+                model: User
+            }]
+        })
+        await userChats.forEach((element) => {
+            element.destroy();
+        });
+
+        //agregar integrantes
+        await integrantes.forEach(element => {
+            UserChat.create({ chatId: idChat, userId: element.id });
+        });
+
+        res.status(200).json(userChats);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+}

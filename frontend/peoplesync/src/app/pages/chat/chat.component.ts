@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { LoginService } from '../../services/login.service';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
+import { UserChatService } from '../../services/userChat.service';
+import { UserService } from '../../services/user.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-chat',
@@ -11,8 +14,11 @@ import { Subject, takeUntil } from 'rxjs';
 export class ChatComponent {
   private ngUnsubscribe = new Subject();
   chatId: number = 0;
+  updateChatVisible: boolean = false;
+  chat: any = {};
+  allUsers: any;
 
-  constructor(private loginService: LoginService, private router: Router) {
+  constructor(private loginService: LoginService, private router: Router, private userChatService: UserChatService, private userService: UserService, private messageService: MessageService) {
   }
 
   ngOnInit(): void {
@@ -32,7 +38,41 @@ export class ChatComponent {
     }
     else {
       this.chatId = Number(localStorage.getItem('chatId'));
+
+      this.userChatService.getUserChatsByChatId(this.chatId).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        const chat = response[0].chat;
+        this.chat = { name: chat.name, id: chat.id, videocall: chat.videocall, integrantes: [] };
+        response.forEach((element: any) => {
+          this.chat.integrantes.push(element.user);
+        })
+        console.log(this.chat);
+      })
     }
+  }
+
+
+  goToChats() {
+    this.router.navigate(['/chats']);
+  }
+
+  modalUpdateChat() {
+    this.updateChatVisible = !this.updateChatVisible;
+
+    this.userService.getAllUsers().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+      console.log(response);
+      this.allUsers = response;
+    })
+  }
+
+  saveUpdateChat() {
+    this.userChatService.updateUserChat(this.chat).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+      this.messageService.add({
+        severity: 'success', summary: 'success', detail: 'Exito al modificar el chat'
+      });
+    },
+      error => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al modificar chat' });
+      })
   }
 
   ngOnDestroy(): void {

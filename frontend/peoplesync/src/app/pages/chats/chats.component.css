@@ -35,6 +35,21 @@
     align-items: start;
 }
 
+.background{
+    background-image: url("../../../assets/PeopleSync.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.5;
+    z-index: -3;
+}
+
 .new-chat-flex{
     display: flex;
     flex-direction: column;
@@ -56,6 +71,7 @@
     margin: 15px;
     border: 1px grey solid;
     border-radius: 20px;
+    cursor: pointer;
 
     .name{
         display: flex;

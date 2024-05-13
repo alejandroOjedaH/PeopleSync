@@ -23,4 +23,26 @@ export class UserChatService {
         }
         return this.http.get<any>(this.path + "/" + idUser, httpOptions);
     }
+
+    getUserChatsByChatId(idChat: number): Observable<any> {
+        const token = localStorage.getItem('token');
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
+        }
+        return this.http.get<any>(this.path + "/chat/" + idChat, httpOptions);
+    }
+
+    updateUserChat(body: any): Observable<any> {
+        const token = localStorage.getItem('token');
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
+        }
+        return this.http.put<any>(this.path + "/", body, httpOptions);
+    }
 }

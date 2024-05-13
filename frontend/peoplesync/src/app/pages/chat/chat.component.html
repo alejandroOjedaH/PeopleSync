@@ -1,1 +1,34 @@
-<p>chat works!</p>
+<div class="header">
+    <div>
+        <i class="fa-solid fa-arrow-left" (click)="goToChats()"></i>
+    </div>
+    <div>{{chat.name}}</div>
+    <i class="fa-solid fa-pen-to-square" (click)="modalUpdateChat()"></i>
+</div>
+
+
+<div class="content"></div>
+<div class="chat-tools">
+    <div class="textarea">
+        <textarea rows="4" cols="100" pInputTextarea [autoResize]="true"></textarea>
+    </div>
+    <i class="fa-solid fa-paperclip tool-icon"></i>
+    <i class="fa-solid fa-paper-plane tool-icon"></i>
+</div>
+<!-- popup update chat -->
+<p-dialog header="Editar Chat" [modal]="true" [(visible)]="updateChatVisible" [style]="{ width: '80%', height: '50%' }">
+
+    <div class="update-chat-flex">
+        <h2>Nombre del chat</h2>
+        <input type="text" pInputText [(ngModel)]="chat.name" />
+        <h2>Participantes</h2>
+        <!-- multiselect with chips -->
+        <p-multiSelect [options]="allUsers" [(ngModel)]="chat.integrantes" placeholder="Modificar integrantes"
+            optionLabel="name" display="chip" [showClear]=true appendTo="body" [filter]="true" filterBy="username"
+            optionLabel="username" />
+        <p-button label="Actualizar" (onClick)="saveUpdateChat()" />
+    </div>
+
+</p-dialog>
+
+<p-toast />

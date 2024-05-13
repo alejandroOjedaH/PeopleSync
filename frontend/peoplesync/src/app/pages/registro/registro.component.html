@@ -1,4 +1,5 @@
 <div id="main">
+    <img src="../../../assets/PeopleSync.png" class="peopleSync-ico">
     <h3>USUARIO</h3>
     <input type="text" pInputText [(ngModel)]="username" (keydown.enter)="registrarse()" />
     <h3>EMAIL</h3>
@@ -8,8 +9,8 @@
     <h3>RE CONTRASEÑA</h3>
     <p-password [(ngModel)]="repassword" [feedback]="false" (keydown.enter)="registrarse()"></p-password>
     <div class="botonesRegistro">
-        <p-button label="Registrarse" (onClick)="registrarse()"></p-button>
-        <p-button severity="secondary" label="Volver" (onClick)="irLogin()"></p-button>
+        <p-button severity="secondary" label="Registrarse" (onClick)="registrarse()"></p-button>
+        <p-button label="Volver" (onClick)="irLogin()"></p-button>
     </div>
 </div>
 <p-toast></p-toast>

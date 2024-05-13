@@ -92,3 +92,12 @@ export async function getUsers(req, res) {
     res.status(500).json({ err: err.message });
   }
 }
+
+export async function getAllUsers(req, res) {
+  try {
+    let user = await User.findAll();
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+}

@@ -37,7 +37,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
-
 }
 
 .content-user, .content-foto{
@@ -48,6 +47,14 @@
     justify-content: start;
     width: 30%;
     margin: 30px;
+}
+
+.content-user{
+    background-color: #FBF3D5;
+    border: 1px grey solid;
+    height: fit-content;
+    border-radius: 15px;
+    padding: 25px;
 }
 
 .content-user div div, .content-foto div *{
@@ -68,4 +75,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: 100px;
+}
+
+.background{
+    background-image: url("../../../assets/PeopleSync.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.5;
+    z-index: -3;
 }

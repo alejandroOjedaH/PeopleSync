@@ -8,7 +8,7 @@
 
 <div class="content">
     <div class="content-foto">
-        <div class="foto" *ngIf="profile.profileImage === null">Foto Perfil</div>
+        <img class="foto" src="../../../assets/noperfil.jpg" *ngIf="profile.profileImage === null">
         <img class="foto" src={{this.profile.profileImage}} *ngIf="profile.profileImage !== null">
         <div *ngIf="isEditable">
             <p-fileUpload mode="basic" chooseLabel="Seleccionar foto" chooseIcon="pi pi-upload" name="profileImage"
@@ -36,5 +36,6 @@
     </div>
 </div>
 
+<div class="background"></div>
 
 <p-toast />

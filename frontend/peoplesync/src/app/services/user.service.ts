@@ -45,4 +45,15 @@ export class UserService {
         }
         return this.http.get<User[]>(this.path + "/notequal/" + localStorage.getItem('id'), httpOptions);
     }
+
+    getAllUsers(): Observable<User[]> {
+        const token = localStorage.getItem('token');
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
+        }
+        return this.http.get<User[]>(this.path + "/", httpOptions);
+    }
 }
