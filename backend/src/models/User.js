@@ -45,7 +45,8 @@ Chat.belongsToMany(User, { through: UserChat });
 
 User.hasMany(Message, {
   foreignKey: "userId",
-  sourceKey: "id"
+  sourceKey: "id",
+  onDelete: 'NO ACTION',
 })
 
 Message.belongsTo(User, {

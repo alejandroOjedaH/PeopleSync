@@ -15,7 +15,7 @@ import { MessageApiService } from '../../services/message.service';
 export class ChatComponent {
   private ngUnsubscribe = new Subject();
   chatId: number = 0;
-  userId: number = Number(localStorage.getItem('id'))!;
+  userId: number = 0;
   updateChatVisible: boolean = false;
   chat: any = {};
   allUsers: any;
@@ -42,6 +42,7 @@ export class ChatComponent {
     }
     else {
       this.chatId = Number(localStorage.getItem('chatId'));
+      this.userId = Number(localStorage.getItem('id'));
 
       this.userChatService.getUserChatsByChatId(this.chatId).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
         const chat = response[0].chat;
