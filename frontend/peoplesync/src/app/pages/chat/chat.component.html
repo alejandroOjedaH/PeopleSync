@@ -6,14 +6,57 @@
     <i class="fa-solid fa-pen-to-square" (click)="modalUpdateChat()"></i>
 </div>
 
+<!-- Content -->
+<div class="content">
+    <div *ngFor="let message of messages">
+        <!-- Los de nuestro usuarios -->
+        <div class="message message-user" *ngIf="message.user.id ===userId">
+            <div class="message-head">
+                <div>
+                    {{message.user.username}}
+                </div>
+                <div>{{message.createdAt | date:'dd-MM-yyyy HH:mm'}}</div>
+            </div>
+            <div class="message-content">
+                <div *ngIf="message.contentType === 'text'">{{message.content}}</div>
+                <div *ngIf="message.contentType === 'pdf'">
+                    <img src="../../../assets/file.png" (click)="saveFile(message.content)">
+                </div>
+                <div *ngIf="message.contentType === 'img'">
+                    <img src="message.content">
+                </div>
+            </div>
+        </div>
 
-<div class="content"></div>
+
+        <!-- Otros usuarios -->
+        <div class="message message-other" *ngIf="message.user.id !==userId">
+            <div class="message-head">
+                <div>
+                    {{message.user.username}}
+                </div>
+                <div>{{message.createdAt | date:'dd-MM-yyyy HH:mm'}}</div>
+            </div>
+            <div class="message-content">
+                <div *ngIf="message.contentType === 'text'">{{message.content}}</div>
+                <div *ngIf="message.contentType === 'pdf'">
+                    <img src="../../../assets/file.png" (click)="saveFile(message.content)">
+                </div>
+                <div *ngIf="message.contentType === 'img'">
+                    <img src="message.content">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tools -->
 <div class="chat-tools">
     <div class="textarea">
-        <textarea rows="4" cols="100" pInputTextarea [autoResize]="true"></textarea>
+        <textarea rows="4" cols="100" pInputTextarea [autoResize]="true" [(ngModel)]="messageToSend.content"></textarea>
     </div>
     <i class="fa-solid fa-paperclip tool-icon"></i>
-    <i class="fa-solid fa-paper-plane tool-icon"></i>
+    <i class="fa-solid fa-paper-plane tool-icon" (click)="sendMessage()"></i>
 </div>
 <!-- popup update chat -->
 <p-dialog header="Editar Chat" [modal]="true" [(visible)]="updateChatVisible" [style]="{ width: '80%', height: '50%' }">

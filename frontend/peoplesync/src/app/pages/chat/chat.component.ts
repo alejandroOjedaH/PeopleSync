@@ -5,6 +5,7 @@ import { Subject, take, takeUntil } from 'rxjs';
 import { UserChatService } from '../../services/userChat.service';
 import { UserService } from '../../services/user.service';
 import { MessageService } from 'primeng/api';
+import { MessageApiService } from '../../services/message.service';
 
 @Component({
   selector: 'app-chat',
@@ -14,11 +15,14 @@ import { MessageService } from 'primeng/api';
 export class ChatComponent {
   private ngUnsubscribe = new Subject();
   chatId: number = 0;
+  userId: number = Number(localStorage.getItem('id'))!;
   updateChatVisible: boolean = false;
   chat: any = {};
   allUsers: any;
+  messageToSend: any = { content: '' };
+  messages: any[] = [];
 
-  constructor(private loginService: LoginService, private router: Router, private userChatService: UserChatService, private userService: UserService, private messageService: MessageService) {
+  constructor(private loginService: LoginService, private router: Router, private userChatService: UserChatService, private userService: UserService, private messageService: MessageService, private messageApi: MessageApiService) {
   }
 
   ngOnInit(): void {
@@ -45,8 +49,12 @@ export class ChatComponent {
         response.forEach((element: any) => {
           this.chat.integrantes.push(element.user);
         })
-        console.log(this.chat);
       })
+
+      //loadFromApiMessages
+      this.messageApi.getMessages().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        this.messages = response;
+      });
     }
   }
 
@@ -73,6 +81,25 @@ export class ChatComponent {
       error => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al modificar chat' });
       })
+  }
+
+  sendMessage() {
+    this.messageToSend.chatId = this.chatId;
+    this.messageToSend.userId = localStorage.getItem('id');
+    this.messageToSend.contentType = 'text';
+
+    if (this.messageToSend.content !== '') {
+      this.messageApi.sendMessage(this.messageToSend).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        this.messageToSend.content = '';
+      },
+        error => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el mensaje' });
+        });
+    }
+  }
+
+  saveFile(blob: any) {
+
   }
 
   ngOnDestroy(): void {

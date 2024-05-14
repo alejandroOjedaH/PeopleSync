@@ -76,9 +76,7 @@ export async function updateUserChat(req, res) {
                 model: User
             }]
         })
-        await userChats.forEach((element) => {
-            element.destroy();
-        });
+        await destroyUserChat(userChats);
 
         //agregar integrantes
         await integrantes.forEach(element => {
@@ -89,4 +87,10 @@ export async function updateUserChat(req, res) {
     } catch (err) {
         res.status(500).json({ err: err.message });
     }
+}
+
+async function destroyUserChat(userChats) {
+    userChats.forEach((element) => {
+        element.destroy();
+    });
 }

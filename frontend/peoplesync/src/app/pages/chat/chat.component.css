@@ -40,6 +40,9 @@
     left: 0;
     right: 0;
     margin: auto;
+
+    border: 1px solid grey;
+    border-radius: 30px;
 }
 
 .chat-tools{
@@ -79,4 +82,40 @@
     align-items: center;
     height: 90%;
     overflow-y:auto;
+}
+
+.message{
+    display: flex;
+    flex-direction: column;
+    min-width: 500px;
+    width: fit-content;
+    border: 1px solid;
+    margin:20px;
+    border-radius: 15px;
+
+    background-color: white;
+}
+
+.message-head{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px;
+    border-bottom: 1px solid grey;
+}
+
+.message-content{
+    padding: 10px;
+}
+
+.message-other{
+    background-color: #D6DAC8;
+    float: left;
+}
+
+.message-user{
+    background-color: white;
+    float: right;
 }
