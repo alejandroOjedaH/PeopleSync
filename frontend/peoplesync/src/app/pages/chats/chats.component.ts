@@ -61,13 +61,13 @@ export class ChatsComponent {
     this.newChatVisible = !this.newChatVisible;
 
     this.userService.getUsers().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-      console.log(response);
+      // console.log(response);
       this.allUsers = response;
     })
   }
 
   saveNewChat() {
-    console.log(this.newChat);
+    // console.log(this.newChat);
     this.newChatVisible = !this.newChatVisible;
 
 

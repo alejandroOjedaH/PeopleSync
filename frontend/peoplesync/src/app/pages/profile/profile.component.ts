@@ -48,7 +48,7 @@ export class ProfileComponent {
 
     this.userService.getUser(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
       this.profile = response;
-      console.log(this.profile);
+      // console.log(this.profile);
     },
       error => {
         console.error(error);

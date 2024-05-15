@@ -6,6 +6,12 @@ import { UserChatService } from '../../services/userChat.service';
 import { UserService } from '../../services/user.service';
 import { MessageService } from 'primeng/api';
 import { MessageApiService } from '../../services/message.service';
+import { HttpEvent } from '@angular/common/http';
+
+interface UploadEvent {
+  originalEvent: HttpEvent<any>,
+  files: File[]
+}
 
 @Component({
   selector: 'app-chat',
@@ -68,7 +74,7 @@ export class ChatComponent {
     this.updateChatVisible = !this.updateChatVisible;
 
     this.userService.getAllUsers().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-      console.log(response);
+      // console.log(response);
       this.allUsers = response;
     })
   }
@@ -78,6 +84,17 @@ export class ChatComponent {
       this.messageService.add({
         severity: 'success', summary: 'success', detail: 'Exito al modificar el chat'
       });
+
+      //Si no esta el usuario lo hecha de la sala
+      let isUser: boolean = false;
+      this.chat.integrantes.forEach((user: any) => {
+        if (user.id === this.userId) {
+          isUser = true;
+        }
+      });
+      if (!isUser) {
+        this.router.navigate(['/chats']);
+      }
     },
       error => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al modificar chat' });
@@ -86,7 +103,7 @@ export class ChatComponent {
 
   sendMessage() {
     this.messageToSend.chatId = this.chatId;
-    this.messageToSend.userId = localStorage.getItem('id');
+    this.messageToSend.userId = this.userId;
     this.messageToSend.contentType = 'text';
 
     if (this.messageToSend.content !== '') {
@@ -99,7 +116,45 @@ export class ChatComponent {
     }
   }
 
-  saveFile(blob: any) {
+  onUpload(event: UploadEvent) {
+    const file = event.files[0];
+    //Image or pdf
+    if (file.type.split("/")[0] === 'image') {
+      this.messageToSend.contentType = "img";
+    } else if (file.type.split("/")[1] === 'pdf') {
+      this.messageToSend.contentType = "pdf";
+    }
+
+    this.fileToBase64(file);
+    console.log(file);
+  }
+
+  fileToBase64(file: File) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = (event: any) => {
+      const imageBase64 = event.target.result;
+
+      //Send file
+      this.messageToSend.content = imageBase64;
+      this.messageToSend.chatId = this.chatId;
+      this.messageToSend.userId = this.userId;
+      console.log(imageBase64);
+
+      if (this.messageToSend.content !== '') {
+        this.messageApi.sendMessage(this.messageToSend).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+          this.messageToSend.content = '';
+        },
+          error => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el mensaje' });
+          });
+      }
+    }
+  }
+
+  downloadFile(blob: any) {
 
   }
 

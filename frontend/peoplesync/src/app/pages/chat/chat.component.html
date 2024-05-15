@@ -13,17 +13,22 @@
         <div class="message message-user" *ngIf="message.user.id ===userId">
             <div class="message-head">
                 <div>
-                    {{message.user.username}}
+                    <div class="header-user">
+                        <div *ngIf="message.user.profileImage !== null"><img src={{message.user.profileImage}}></div>
+                        {{message.user.username}}
+                    </div>
                 </div>
                 <div>{{message.createdAt | date:'dd-MM-yyyy HH:mm'}}</div>
             </div>
             <div class="message-content">
                 <div *ngIf="message.contentType === 'text'">{{message.content}}</div>
-                <div *ngIf="message.contentType === 'pdf'">
-                    <img src="../../../assets/file.png" (click)="saveFile(message.content)">
+                <div *ngIf="message.contentType === 'pdf'" class="pdf">
+                    <a href={{message.content}} download="archivo.pdf">
+                        <img src="../../../assets/file.png">
+                    </a>
                 </div>
-                <div *ngIf="message.contentType === 'img'">
-                    <img src="message.content">
+                <div class="image" *ngIf="message.contentType === 'img'">
+                    <img src={{message.content}}>
                 </div>
             </div>
         </div>
@@ -33,17 +38,22 @@
         <div class="message message-other" *ngIf="message.user.id !==userId">
             <div class="message-head">
                 <div>
-                    {{message.user.username}}
+                    <div class="header-user">
+                        <div *ngIf="message.user.profileImage !== null"><img src={{message.user.profileImage}}></div>
+                        {{message.user.username}}
+                    </div>
                 </div>
                 <div>{{message.createdAt | date:'dd-MM-yyyy HH:mm'}}</div>
             </div>
             <div class="message-content">
                 <div *ngIf="message.contentType === 'text'">{{message.content}}</div>
-                <div *ngIf="message.contentType === 'pdf'">
-                    <img src="../../../assets/file.png" (click)="saveFile(message.content)">
+                <div *ngIf="message.contentType === 'pdf'" class="pdf">
+                    <a href={{message.content}} download="archivo.pdf">
+                        <img src="../../../assets/file.png">
+                    </a>
                 </div>
-                <div *ngIf="message.contentType === 'img'">
-                    <img src="message.content">
+                <div class="image" *ngIf="message.contentType === 'img'">
+                    <img src={{message.content}}>
                 </div>
             </div>
         </div>
@@ -55,8 +65,10 @@
     <div class="textarea">
         <textarea rows="4" cols="100" pInputTextarea [autoResize]="true" [(ngModel)]="messageToSend.content"></textarea>
     </div>
-    <i class="fa-solid fa-paperclip tool-icon"></i>
     <i class="fa-solid fa-paper-plane tool-icon" (click)="sendMessage()"></i>
+    <p-fileUpload mode="basic" chooseLabel="Seleccionar archivo" chooseIcon="pi pi-upload" name="profileImage"
+        chooseIcon="fa-solid fa-paperclip tool-icon" url="https://www.primefaces.org/cdn/api/upload.php"
+        accept="image/*,application/pdf" (onUpload)="onUpload($event)" />
 </div>
 <!-- popup update chat -->
 <p-dialog header="Editar Chat" [modal]="true" [(visible)]="updateChatVisible" [style]="{ width: '80%', height: '50%' }">
