@@ -67,7 +67,14 @@ export class ProfileComponent {
 
     reader.onload = (event: any) => {
       const imageBase64 = event.target.result;
-      this.profile.profileImage = imageBase64;
+
+      this.userService.updateUser({ profileImage: imageBase64 }).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuario actualizado' });
+        this.profile.profileImage = response.profileImage;
+      },
+        error => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
+        })
     }
   }
 
