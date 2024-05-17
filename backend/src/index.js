@@ -4,7 +4,7 @@ import { sequelize } from "./database/database.js";
 async function main() {
   try {
     //sequelize ini
-    await sequelize.sync({ force: false, alter: true });
+    await sequelize.sync({ force: false, alter: false });
 
     console.log("Connection has been established");
 

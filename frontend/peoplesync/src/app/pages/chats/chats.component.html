@@ -10,6 +10,7 @@
     <div class="chatCard" *ngFor="let chat of allChats" (click)="goChat(chat.id)">
         <div class="name">
             <h2>{{chat.name}}</h2>
+            <div *ngIf="chat.isNewMessage === true" class="notification"></div>
         </div>
         <div class="users">
             <div *ngFor="let user of chat.user">

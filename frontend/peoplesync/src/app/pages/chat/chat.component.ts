@@ -32,11 +32,10 @@ export class ChatComponent {
   private socket: any;
 
   constructor(private loginService: LoginService, private router: Router, private userChatService: UserChatService, private userService: UserService, private messageService: MessageService, private messageApi: MessageApiService) {
-    this.createSocketConnection();
+
   }
 
   ngOnInit(): void {
-    this.prueba();
     this.loginService.checkToken().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
       if (!response) {
         this.router.navigate(['/login']);
@@ -67,22 +66,23 @@ export class ChatComponent {
         this.messages = response;
       });
     }
+    this.createSocketConnection();
   }
 
   createSocketConnection() {
     //Connect to socket
     this.socket = io(BACKEND);
 
-
-    this.socket.on('message', (newMessage: any) => {
-      console.log(newMessage);
-      this.messages.unshift(newMessage);
-    })
-  }
-  prueba() {
     //enter the chatSocket
     this.socket.emit('join', this.chatId);
+
+    //Recive message
+    this.socket.on('message', (newMessage: any) => {
+      this.messages.push(newMessage);
+      console.log(this.messages);
+    })
   }
+
   goToChats() {
     this.router.navigate(['/chats']);
   }
@@ -125,7 +125,6 @@ export class ChatComponent {
 
     if (this.messageToSend.content !== '') {
       this.messageApi.sendMessage(this.messageToSend).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-        this.socket.emit('message', this.messageToSend);
         this.messageToSend.content = '';
       },
         error => {
@@ -177,9 +176,15 @@ export class ChatComponent {
   }
 
   ngOnDestroy(): void {
+    //turn off the notification
+    this.userChatService.notificationOff().pipe(takeUntil(this.ngUnsubscribe)).subscribe();
+
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
 
     localStorage.removeItem('chatId');
+
+    //Leave the socket chat
+    this.socket.emit('leave', this.chatId);
   }
 }

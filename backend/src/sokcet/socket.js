@@ -1,13 +1,13 @@
-import io from "./app.js";
+export function configSocket(io) {
+    io.on('connection', (socket) => {
+        socket.on('join', (chat) => {
+            socket.join(chat);
+            console.log('Usuario conectado a: ' + chat);
+        });
 
-io.on('connection', (socket) => {
-    console.log('Un usuario se ha conectado');
-    socket.on('join', (chat) => {
-        socket.join(chat);
-        console.log('Usuario conectado a: ' + chat);
+        socket.on('leave', (room) => {
+            socket.leave(room);
+            console.log(`Usuario dejó la sala: ${room}`);
+        });
     });
-
-    socket.on('message', (data) => {
-        io.to(data.chatId).emit('mensaje', data);
-    })
-});
+}

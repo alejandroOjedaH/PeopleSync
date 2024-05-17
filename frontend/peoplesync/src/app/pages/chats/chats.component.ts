@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { LoginService } from '../../services/login.service.js';
 import { UserService } from '../../services/user.service.js';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, elementAt, takeUntil } from 'rxjs';
 import { User } from '../../interfaces/user.interface.js';
 import { ChatService } from '../../services/chat.service.js';
 import { MessageService } from 'primeng/api';
 import { UserChatService } from '../../services/userChat.service.js';
+import io from 'socket.io-client';
+import { BACKEND } from '../../config/Config';
 
 
 @Component({
@@ -21,10 +23,13 @@ export class ChatsComponent {
   allUsers: User[] = [];
   id: number;
   allChats: any[] = [];
+  private socket: any;
+
 
   constructor(private loginService: LoginService, private router: Router, private userService: UserService, private chatService: ChatService, private messageService: MessageService,
     private userChatService: UserChatService) {
     this.id = Number(localStorage.getItem('id'));
+    this.createSocketConnection();
   }
 
   ngOnInit(): void {
@@ -41,21 +46,41 @@ export class ChatsComponent {
     this.traerChats();
   }
 
+  createSocketConnection() {
+    //Connect to socket
+    this.socket = io(BACKEND);
+
+    //enter the chatSocket
+    this.socket.emit('join', 'lobby');
+
+    // Recive message
+    this.socket.on('isMessage', (chatId: any) => {
+      this.allChats.forEach(element => {
+        if (element.id === chatId) {
+          this.traerChats();
+        }
+      })
+    })
+  }
+
   traerChats() {
     this.allChats = [];
     this.userChatService.getUserChats(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
       response.forEach((chatAux: any) => {
-        const { id, name, videocall } = chatAux.chat;
+        const { id, name, videocall, isNewMessage } = chatAux.chat;
         let chat: any = { id: id, name: name, videocall: videocall, user: [], updatedAt: chatAux.chat.users_chats[0].updatedAt };
 
         chatAux.chat.users_chats.forEach((element: any) => {
+          if (element.user.id === this.id) {
+            chat.isNewMessage = element.isNewMessage;
+          }
           chat.user.push(element.user);
         });
         this.allChats.push(chat);
       });
       this.orderChatsByUpdate();
-      console.log(this.allChats);
     })
+    console.log(this.allChats);
   }
 
   orderChatsByUpdate() {
@@ -106,5 +131,7 @@ export class ChatsComponent {
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
+
+    this.socket.emit('leave', 'lobby');
   }
 }

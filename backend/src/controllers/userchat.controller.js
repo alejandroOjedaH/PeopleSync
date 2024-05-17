@@ -94,3 +94,20 @@ async function destroyUserChat(userChats) {
         element.destroy();
     });
 }
+
+export async function notifiactionOff(req, res) {
+    try {
+        const userChat = await UserChat.findOne({
+            where: {
+                chatId: req.params.chatId,
+                userId: req.params.userId
+            }
+        })
+
+        userChat.isNewMessage = false;
+        await userChat.save();
+        res.status(200).json(userChat);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+}

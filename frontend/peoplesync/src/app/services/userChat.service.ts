@@ -45,4 +45,15 @@ export class UserChatService {
         }
         return this.http.put<any>(this.path + "/", body, httpOptions);
     }
+
+    notificationOff(): Observable<any> {
+        const token = localStorage.getItem('token');
+        const httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            })
+        }
+        return this.http.get<any>(this.path + "/" + localStorage.getItem('chatId') + "/" + localStorage.getItem('id'), httpOptions);
+    }
 }

@@ -4,6 +4,7 @@ import { front } from "./config/config.js";
 import { checkCredentials } from "./config/jwt.js";
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { configSocket } from './sokcet/socket.js';
 
 import usersRoutes from "./routes/users.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
@@ -19,6 +20,8 @@ export const io = new Server(htmlServer, {
         methods: ["GET", "POST"]
     }
 });
+
+configSocket(io);
 
 //middlewares
 app.use(cors({ origin: front }));
