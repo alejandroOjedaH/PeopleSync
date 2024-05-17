@@ -46,13 +46,27 @@ export class ChatsComponent {
     this.userChatService.getUserChats(this.id).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
       response.forEach((chatAux: any) => {
         const { id, name, videocall } = chatAux.chat;
-        let chat: any = { id: id, name: name, videocall: videocall, user: [] };
+        let chat: any = { id: id, name: name, videocall: videocall, user: [], updatedAt: chatAux.chat.users_chats[0].updatedAt };
 
         chatAux.chat.users_chats.forEach((element: any) => {
           chat.user.push(element.user);
         });
         this.allChats.push(chat);
       });
+      this.orderChatsByUpdate();
+      console.log(this.allChats);
+    })
+  }
+
+  orderChatsByUpdate() {
+    this.allChats.sort((a: any, b: any) => {
+      if (a.updatedAt > b.updatedAt) {
+        return -1;
+      } else if (a.updatedAt < b.updatedAt) {
+        return 1;
+      } else {
+        return 0;
+      }
     })
   }
 

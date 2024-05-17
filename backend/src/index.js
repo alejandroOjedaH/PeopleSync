@@ -1,4 +1,4 @@
-import app from "./app.js";
+import htmlServer from "./app.js";
 import { sequelize } from "./database/database.js";
 
 async function main() {
@@ -9,7 +9,7 @@ async function main() {
     console.log("Connection has been established");
 
     //express ini
-    app.listen(3000, () => {
+    htmlServer.listen(3000, () => {
       console.log("Server is running on port 3000");
     });
   } catch (e) {

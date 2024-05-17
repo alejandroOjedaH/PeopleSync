@@ -7,6 +7,8 @@ import { UserService } from '../../services/user.service';
 import { MessageService } from 'primeng/api';
 import { MessageApiService } from '../../services/message.service';
 import { HttpEvent } from '@angular/common/http';
+import io from 'socket.io-client';
+import { BACKEND } from '../../config/Config';
 
 interface UploadEvent {
   originalEvent: HttpEvent<any>,
@@ -27,12 +29,14 @@ export class ChatComponent {
   allUsers: any;
   messageToSend: any = { content: '' };
   messages: any[] = [];
+  private socket: any;
 
   constructor(private loginService: LoginService, private router: Router, private userChatService: UserChatService, private userService: UserService, private messageService: MessageService, private messageApi: MessageApiService) {
+    this.createSocketConnection();
   }
 
   ngOnInit(): void {
-
+    this.prueba();
     this.loginService.checkToken().pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
       if (!response) {
         this.router.navigate(['/login']);
@@ -65,7 +69,20 @@ export class ChatComponent {
     }
   }
 
+  createSocketConnection() {
+    //Connect to socket
+    this.socket = io(BACKEND);
 
+
+    this.socket.on('message', (newMessage: any) => {
+      console.log(newMessage);
+      this.messages.unshift(newMessage);
+    })
+  }
+  prueba() {
+    //enter the chatSocket
+    this.socket.emit('join', this.chatId);
+  }
   goToChats() {
     this.router.navigate(['/chats']);
   }
@@ -108,6 +125,7 @@ export class ChatComponent {
 
     if (this.messageToSend.content !== '') {
       this.messageApi.sendMessage(this.messageToSend).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        this.socket.emit('message', this.messageToSend);
         this.messageToSend.content = '';
       },
         error => {
