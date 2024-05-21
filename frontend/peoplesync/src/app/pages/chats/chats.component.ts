@@ -80,7 +80,7 @@ export class ChatsComponent {
       });
       this.orderChatsByUpdate();
     })
-    console.log(this.allChats);
+    // console.log(this.allChats);
   }
 
   orderChatsByUpdate() {

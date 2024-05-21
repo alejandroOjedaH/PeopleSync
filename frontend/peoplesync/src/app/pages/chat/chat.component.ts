@@ -171,8 +171,9 @@ export class ChatComponent {
     }
   }
 
-  downloadFile(blob: any) {
-
+  goToVideoCall() {
+    localStorage.setItem('callId', this.chatId.toString());
+    this.router.navigate(['/videocall']);
   }
 
   ngOnDestroy(): void {

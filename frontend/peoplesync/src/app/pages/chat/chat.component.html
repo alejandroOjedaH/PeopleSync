@@ -62,8 +62,10 @@
 
 <!-- Tools -->
 <div class="chat-tools">
+    <i class="fa-solid fa-phone-volume tool-icon" (click)="goToVideoCall()"></i>
     <div class="textarea">
-        <textarea rows="4" cols="100" pInputTextarea [autoResize]="true" [(ngModel)]="messageToSend.content"></textarea>
+        <textarea rows="4" cols="100" pInputTextarea [autoResize]="true" [(ngModel)]="messageToSend.content"
+            (keydown.enter)="sendMessage()"></textarea>
     </div>
     <i class="fa-solid fa-paper-plane tool-icon" (click)="sendMessage()"></i>
     <p-fileUpload mode="basic" chooseLabel="Seleccionar archivo" chooseIcon="pi pi-upload" name="profileImage"
