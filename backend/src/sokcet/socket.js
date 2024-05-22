@@ -28,5 +28,8 @@ export function configSocket(io) {
             console.log('Cliente desconectado');
         });
 
+        //Añadir un join call que emita un userConnected que recarge el componente
+
+        //Añadir un disconect que quite al otro usuario de la llamada
     });
 }

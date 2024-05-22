@@ -32,7 +32,8 @@ export class ChatComponent {
   private socket: any;
 
   constructor(private loginService: LoginService, private router: Router, private userChatService: UserChatService, private userService: UserService, private messageService: MessageService, private messageApi: MessageApiService) {
-
+    //turn off the notification
+    this.userChatService.notificationOff().pipe(takeUntil(this.ngUnsubscribe)).subscribe();
   }
 
   ngOnInit(): void {
