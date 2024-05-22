@@ -57,13 +57,25 @@ export class ProfileComponent {
 
   onUpload(event: UploadEvent) {
     const imageFile = event.files[0];
-    this.userService.updateUser({ profileImage: URL.createObjectURL(imageFile) }).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-      this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuario actualizado' });
-      this.profile.profileImage = response.profileImage;
-    },
-      error => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
-      })
+    this.fileToBase64(imageFile);
+  }
+
+  fileToBase64(file: File) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = (event: any) => {
+      const imageBase64 = event.target.result;
+
+      this.userService.updateUser({ profileImage: imageBase64 }).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+        this.messageService.add({ severity: 'success', summary: 'Exito', detail: 'Usuario actualizado' });
+        this.profile.profileImage = response.profileImage;
+      },
+        error => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: error.message });
+        })
+    }
   }
 
   save() {

@@ -143,18 +143,31 @@ export class ChatComponent {
       this.messageToSend.contentType = "pdf";
     }
 
-    //Send file
-    this.messageToSend.content = URL.createObjectURL(file);
-    this.messageToSend.chatId = this.chatId;
-    this.messageToSend.userId = this.userId;
+    this.fileToBase64(file);
+    console.log(file);
+  }
 
-    if (this.messageToSend.content !== '') {
-      this.messageApi.sendMessage(this.messageToSend).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
-        this.messageToSend.content = '';
-      },
-        error => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el mensaje' });
-        });
+  fileToBase64(file: File) {
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onload = (event: any) => {
+      const imageBase64 = event.target.result;
+
+      //Send file
+      this.messageToSend.content = imageBase64;
+      this.messageToSend.chatId = this.chatId;
+      this.messageToSend.userId = this.userId;
+
+      if (this.messageToSend.content !== '') {
+        this.messageApi.sendMessage(this.messageToSend).pipe(takeUntil(this.ngUnsubscribe)).subscribe((response) => {
+          this.messageToSend.content = '';
+        },
+          error => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el mensaje' });
+          });
+      }
     }
   }
 
