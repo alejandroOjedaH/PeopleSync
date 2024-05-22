@@ -12,13 +12,21 @@ export function configSocket(io) {
         });
 
         //Videollamada
-        socket.on('joinVideocall', (videocall) => {
-            socket.join(videocall.callId);
-            socket.to(videocall.callId).emit('userConnected', videocall.userId);
+        socket.on('offer', (data) => {
+            socket.broadcast.emit('offer', data);
         });
 
-        socket.on('disconnect', (videocall) => {
-            socket.broadcast.to(videocall.roomId).emit('userDisconnected', videocall.userId);
+        socket.on('answer', (data) => {
+            socket.broadcast.emit('answer', data);
         });
+
+        socket.on('candidate', (data) => {
+            socket.broadcast.emit('candidate', data);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Cliente desconectado');
+        });
+
     });
 }

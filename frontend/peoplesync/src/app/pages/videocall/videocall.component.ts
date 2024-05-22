@@ -12,14 +12,15 @@ import { BACKEND } from '../../config/Config';
 })
 export class VideocallComponent {
   private ngUnsubscribe = new Subject();
-  callId: string = '';
-  userId: number = 0;
   private socket: any;
-  @ViewChild('myVideo') myVideo?: ElementRef;
-  @ViewChild('peerVideo') peerVideo?: ElementRef;
-  peerConnection?: RTCPeerConnection;
-  localStream?: MediaStream;
-  remoteStream?: MediaStream;
+  @ViewChild('localVideo') localVideo?: ElementRef;
+  @ViewChild('remoteVideo') remoteVideo?: ElementRef;
+  private peerConnection?: RTCPeerConnection;
+  private localStream?: MediaStream;
+  private callId: string = 'some-call-id';
+  private userId: number = 0;
+  private iceCandidatesQueue: RTCIceCandidate[] = [];
+  private remoteDescriptionSet: boolean = false;
 
   constructor(
     private loginService: LoginService,
@@ -42,106 +43,53 @@ export class VideocallComponent {
     this.userId = Number(localStorage.getItem('id'));
 
     this.createSocketConnection();
-    this.startVideoCall();
   }
 
   createSocketConnection() {
-    this.socket = io(BACKEND);
-  }
+    const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+    const pc = new RTCPeerConnection(configuration);
 
-  joinRoom() {
-    this.socket.emit('joinVideocall', { callId: this.callId, userId: this.userId });
-  }
+    const socket = io('http://localhost:3000');
 
-  onUserConnected(callback: (userId: string) => void) {
-    this.socket.on('userConnected', callback);
-  }
-
-  onUserDisconnected(callback: (userId: string) => void) {
-    this.socket.on('userDisconnected', callback);
-  }
-
-  emit(event: string, data: any) {
-    this.socket.emit(event, data);
-  }
-
-  onOffer(callback: (offer: RTCSessionDescriptionInit) => void) {
-    this.socket.on('offer', callback);
-  }
-
-  onAnswer(callback: (answer: RTCSessionDescriptionInit) => void) {
-    this.socket.on('answer', callback);
-  }
-
-  onIceCandidate(callback: (candidate: RTCIceCandidate) => void) {
-    this.socket.on('ice-candidate', callback);
-  }
-
-  async startVideoCall() {
-    this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    this.myVideo!.nativeElement.srcObject = this.localStream;
-
-    const configuration = {
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302'
-        }
-      ]
-    };
-
-    this.peerConnection = new RTCPeerConnection(configuration);
-    this.remoteStream = new MediaStream();
-
-    this.peerVideo!.nativeElement.srcObject = this.remoteStream;
-
-    this.localStream.getTracks().forEach(track => {
-      this.peerConnection?.addTrack(track, this.localStream!);
-      console.log("entra");
+    socket.on('offer', async (data) => {
+      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      socket.emit('answer', { answer: pc.localDescription });
     });
 
-    this.peerConnection.ontrack = (event) => {
-      console.log("Evento ontrack recibido:", event);
-      event.streams[0].getTracks().forEach(track => {
-        this.remoteStream?.addTrack(track);
-      });
-    };
-
-    this.peerConnection.onnegotiationneeded = async () => {
-      try {
-        const offer = await this.peerConnection?.createOffer();
-        await this.peerConnection?.setLocalDescription(offer);
-        this.emit('offer', offer);
-      } catch (err) {
-        console.error('Error al crear la oferta:', err);
-      }
-    };
-
-    this.onUserConnected(async (userId) => {
-      const offer = await this.peerConnection?.createOffer();
-      await this.peerConnection?.setLocalDescription(offer);
-      this.socket.emit('offer', offer, userId);
+    socket.on('answer', async (data) => {
+      await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     });
 
-    this.onOffer(async (offer: any) => {
-      await this.peerConnection?.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await this.peerConnection?.createAnswer();
-      await this.peerConnection?.setLocalDescription(answer);
-      this.emit('answer', answer);
+    socket.on('candidate', async (data) => {
+      await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
     });
 
-    this.onAnswer(async (answer: any) => {
-      await this.peerConnection?.setRemoteDescription(new RTCSessionDescription(answer));
-    });
-
-    this.onIceCandidate((candidate: any) => {
-      this.peerConnection?.addIceCandidate(new RTCIceCandidate(candidate));
-    });
-
-    this.peerConnection.onicecandidate = (event) => {
+    pc.onicecandidate = (event) => {
       if (event.candidate) {
-        this.socket.emit('ice-candidate', event.candidate);
+        socket.emit('candidate', { candidate: event.candidate });
       }
     };
+
+    pc.ontrack = (event) => {
+      this.remoteVideo!.nativeElement.srcObject = event.streams[0];
+    };
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+      this.localVideo!.nativeElement.srcObject = stream;
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track, stream);
+      });
+
+      pc.createOffer().then((offer) => {
+        return pc.setLocalDescription(offer);
+      }).then(() => {
+        socket.emit('offer', { offer: pc.localDescription });
+      });
+    }).catch((error) => {
+      console.error('Error accediendo a dispositivos de medios.', error);
+    });
   }
 
   ngOnDestroy(): void {
