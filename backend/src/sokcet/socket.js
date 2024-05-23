@@ -25,21 +25,16 @@ export function configSocket(io) {
         //Añadir un disconect que quite al otro usuario de la llamada
 
         socket.on('offer', (data) => {
-            socket.broadcast.emit('offer', data);
+            socket.to(data.callId).emit('offer', data);
         });
 
         socket.on('answer', (data) => {
-            socket.broadcast.emit('answer', data);
+            socket.to(data.callId).emit('answer', data);
         });
 
         socket.on('candidate', (data) => {
-            socket.broadcast.emit('candidate', data);
+            socket.to(data.callId).emit('candidate', data);
         });
-
-        socket.on('disconnect', () => {
-            console.log('Cliente desconectado');
-        });
-
 
     });
 }

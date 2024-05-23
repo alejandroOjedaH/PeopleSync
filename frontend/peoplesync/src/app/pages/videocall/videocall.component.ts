@@ -60,7 +60,7 @@ export class VideocallComponent {
       await this.pc.setRemoteDescription(new RTCSessionDescription(data.offer));
       const answer = await this.pc.createAnswer();
       await this.pc.setLocalDescription(answer);
-      this.socket.emit('answer', { answer: this.pc.localDescription });
+      this.socket.emit('answer', { answer: this.pc.localDescription, callId: this.callId });
     });
 
     this.socket.on('answer', async (data: any) => {
@@ -73,7 +73,7 @@ export class VideocallComponent {
 
     this.pc.onicecandidate = (event: any) => {
       if (event.candidate) {
-        this.socket.emit('candidate', { candidate: event.candidate });
+        this.socket.emit('candidate', { candidate: event.candidate, callId: this.callId });
       }
     };
 
@@ -90,7 +90,7 @@ export class VideocallComponent {
       this.pc.createOffer().then((offer: any) => {
         return this.pc.setLocalDescription(offer);
       }).then(() => {
-        this.socket.emit('offer', { offer: this.pc.localDescription });
+        this.socket.emit('offer', { offer: this.pc.localDescription, callId: this.callId });
       });
     }).catch((error) => {
       console.error('Error accediendo a dispositivos de medios.', error);
