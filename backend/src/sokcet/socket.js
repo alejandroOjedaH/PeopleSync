@@ -14,7 +14,6 @@ export function configSocket(io) {
         //Videollamada
         socket.on('joinVideocall', (data) => {
             socket.join(data.callId);
-            console.log('Usuario conectado a: ' + data.callId);
         });
 
         socket.on('leaveVideocall', (data) => {
@@ -22,7 +21,6 @@ export function configSocket(io) {
             socket.to(data.callId).emit('userDisconnected');
         });
 
-        //Añadir un disconect que quite al otro usuario de la llamada
 
         socket.on('offer', (data) => {
             socket.to(data.callId).emit('offer', data);

@@ -15,7 +15,7 @@ export class VideocallComponent {
   private socket: any;
   @ViewChild('localVideo') localVideo?: any;
   @ViewChild('remoteVideo') remoteVideo?: any;
-  private callId: string = 'some-call-id';
+  private callId: string = '';
   private userId: number = 0;
 
   configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
@@ -55,7 +55,7 @@ export class VideocallComponent {
       this.router.navigate(['/chats']);
     });
 
-
+    //Recibe la oferta y crea una respuesta
     this.socket.on('offer', async (data: any) => {
       await this.pc.setRemoteDescription(new RTCSessionDescription(data.offer));
       const answer = await this.pc.createAnswer();
@@ -63,30 +63,36 @@ export class VideocallComponent {
       this.socket.emit('answer', { answer: this.pc.localDescription, callId: this.callId });
     });
 
+    //Recibe la respuesta y configura el pc
     this.socket.on('answer', async (data: any) => {
       await this.pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     });
 
+    //Recibe los candidatos
     this.socket.on('candidate', async (data: any) => {
       await this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
     });
 
+    //Busca el mejor candidato Ice
     this.pc.onicecandidate = (event: any) => {
       if (event.candidate) {
         this.socket.emit('candidate', { candidate: event.candidate, callId: this.callId });
       }
     };
 
+    //Espera a recibir el video y el audio
     this.pc.ontrack = (event: any) => {
       this.remoteVideo!.nativeElement.srcObject = event.streams[0];
     };
 
+    //Configura el video y audio local y lo envia
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
       this.localVideo!.nativeElement.srcObject = stream;
       stream.getTracks().forEach((track) => {
         this.pc.addTrack(track, stream);
       });
 
+      //Crea la oferta y la envia al otro usuario
       this.pc.createOffer().then((offer: any) => {
         return this.pc.setLocalDescription(offer);
       }).then(() => {
