@@ -12,6 +12,18 @@ export function configSocket(io) {
         });
 
         //Videollamada
+        socket.on('joinVideocall', (data) => {
+            socket.join(data.callId);
+            console.log('Usuario conectado a: ' + data.callId);
+        });
+
+        socket.on('leaveVideocall', (data) => {
+            socket.leave(data.callId);
+            socket.to(data.callId).emit('userDisconnected');
+        });
+
+        //Añadir un disconect que quite al otro usuario de la llamada
+
         socket.on('offer', (data) => {
             socket.broadcast.emit('offer', data);
         });
@@ -28,8 +40,6 @@ export function configSocket(io) {
             console.log('Cliente desconectado');
         });
 
-        //Añadir un join call que emita un userConnected que recarge el componente
 
-        //Añadir un disconect que quite al otro usuario de la llamada
     });
 }

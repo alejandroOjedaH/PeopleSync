@@ -13,20 +13,19 @@ import { BACKEND } from '../../config/Config';
 export class VideocallComponent {
   private ngUnsubscribe = new Subject();
   private socket: any;
-  @ViewChild('localVideo') localVideo?: ElementRef;
-  @ViewChild('remoteVideo') remoteVideo?: ElementRef;
-  private peerConnection?: RTCPeerConnection;
-  private localStream?: MediaStream;
+  @ViewChild('localVideo') localVideo?: any;
+  @ViewChild('remoteVideo') remoteVideo?: any;
   private callId: string = 'some-call-id';
   private userId: number = 0;
-  private iceCandidatesQueue: RTCIceCandidate[] = [];
-  private remoteDescriptionSet: boolean = false;
+
+  configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+  pc: any;
 
   constructor(
     private loginService: LoginService,
     private router: Router
   ) {
-
+    this.pc = new RTCPeerConnection(this.configuration);
   }
 
   ngOnInit(): void {
@@ -46,57 +45,69 @@ export class VideocallComponent {
   }
 
   createSocketConnection() {
-    const configuration = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-    const pc = new RTCPeerConnection(configuration);
 
-    const socket = io('http://localhost:3000');
+    this.socket = io(BACKEND);
 
-    socket.on('offer', async (data) => {
-      await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      socket.emit('answer', { answer: pc.localDescription });
+    this.socket.emit('joinVideocall', { callId: this.callId });
+
+    this.socket.on('userDisconnected', () => {
+      this.pc.close();
+      this.router.navigate(['/chats']);
     });
 
-    socket.on('answer', async (data) => {
-      await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+
+    this.socket.on('offer', async (data: any) => {
+      await this.pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+      const answer = await this.pc.createAnswer();
+      await this.pc.setLocalDescription(answer);
+      this.socket.emit('answer', { answer: this.pc.localDescription });
     });
 
-    socket.on('candidate', async (data) => {
-      await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    this.socket.on('answer', async (data: any) => {
+      await this.pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     });
 
-    pc.onicecandidate = (event) => {
+    this.socket.on('candidate', async (data: any) => {
+      await this.pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    });
+
+    this.pc.onicecandidate = (event: any) => {
       if (event.candidate) {
-        socket.emit('candidate', { candidate: event.candidate });
+        this.socket.emit('candidate', { candidate: event.candidate });
       }
     };
 
-    pc.ontrack = (event) => {
+    this.pc.ontrack = (event: any) => {
       this.remoteVideo!.nativeElement.srcObject = event.streams[0];
     };
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
       this.localVideo!.nativeElement.srcObject = stream;
       stream.getTracks().forEach((track) => {
-        pc.addTrack(track, stream);
+        this.pc.addTrack(track, stream);
       });
 
-      pc.createOffer().then((offer) => {
-        return pc.setLocalDescription(offer);
+      this.pc.createOffer().then((offer: any) => {
+        return this.pc.setLocalDescription(offer);
       }).then(() => {
-        socket.emit('offer', { offer: pc.localDescription });
+        this.socket.emit('offer', { offer: this.pc.localDescription });
       });
     }).catch((error) => {
       console.error('Error accediendo a dispositivos de medios.', error);
     });
   }
 
+  goToChats() {
+    this.router.navigate(['/chats']);
+  }
+
   ngOnDestroy(): void {
     this.ngUnsubscribe.next(true);
     this.ngUnsubscribe.complete();
 
-    this.socket.emit('leave', this.callId);
+    this.pc.close();
+    this.socket.emit('leaveVideocall', { callId: this.callId });
+
     // this.socket.emit('leave', this.callId);
     localStorage.removeItem('callId');
   }
