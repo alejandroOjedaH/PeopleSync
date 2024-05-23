@@ -18,6 +18,7 @@
     padding: 15px;
     border-radius: 50%;
     cursor: pointer;
+    transform: rotate(135deg);
 }
 .tool-icon:hover{
     background-color: #f19355;
