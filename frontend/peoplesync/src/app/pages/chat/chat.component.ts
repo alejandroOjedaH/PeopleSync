@@ -130,6 +130,7 @@ export class ChatComponent {
       },
         error => {
           this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el mensaje' });
+          this.messageToSend.content = '';
         });
     }
   }
@@ -166,6 +167,7 @@ export class ChatComponent {
         },
           error => {
             this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error al enviar el mensaje' });
+            this.messageToSend.content = '';
           });
       }
     }
