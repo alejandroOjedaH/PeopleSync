@@ -11,7 +11,7 @@ import {
 
 const router = Router();
 
-router.route("/authenticate").post(loginUser).get(checkTokenUser).post(createUser);
+router.route("/authenticate").post(loginUser).get(checkTokenUser);
 router.route("/authenticate/new").post(createUser);
 router.route("/:id").get(getUser).put(updateUser);
 router.route("/notequal/:id").get(getUsers);
